@@ -2,6 +2,7 @@ package guru.ga.country.service;
 
 import guru.ga.country.data.CountryEntity;
 import guru.ga.country.data.CountryRepository;
+import guru.ga.country.exception.CountryNotFoundException;
 import guru.ga.country.model.CountryJson;
 import jakarta.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class DbCountryService implements CountryService {
@@ -26,8 +28,7 @@ public class DbCountryService implements CountryService {
     public List<CountryJson> allCountries() {
         return countryRepository.findAll()
                 .stream()
-                .map(ce ->
-                        new CountryJson(ce.getCountryName(), ce.getCode(), ce.getTotalArea()))
+                .map(CountryJson::fromEntity)
                 .toList();
     }
 
@@ -48,5 +49,13 @@ public class DbCountryService implements CountryService {
         countryFromDb.setCode(country.code());
         CountryEntity updatedEntity = countryRepository.save(countryFromDb);
         return CountryJson.fromEntity(updatedEntity);
+    }
+
+    @Override
+    public CountryJson byId(String id) {
+        return countryRepository.findById(UUID.fromString(id))
+                .stream()
+                .map(CountryJson::fromEntity)
+                .findAny().orElseThrow(CountryNotFoundException::new);
     }
 }

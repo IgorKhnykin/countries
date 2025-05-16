@@ -11,4 +11,6 @@ public interface CountryService {
     CountryJson addCountry(CountryJson country);
 
     CountryJson editCountry(CountryJson country);
+
+    CountryJson byId(String id);
 }

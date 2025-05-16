@@ -34,4 +34,9 @@ public class CountryController {
     public CountryJson editCountry(@RequestBody CountryJson country) {
         return countryService.editCountry(country);
     }
+
+    @GetMapping("/{id}")
+    public CountryJson getCountryById(@PathVariable("id") String id) {
+        return countryService.byId(id);
+    }
 }
