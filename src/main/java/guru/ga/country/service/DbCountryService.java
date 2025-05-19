@@ -4,8 +4,14 @@ import guru.ga.country.data.CountryEntity;
 import guru.ga.country.data.CountryRepository;
 import guru.ga.country.exception.CountryNotFoundException;
 import guru.ga.country.model.CountryJson;
+import guru.ga.country.model.gql.CountryGql;
+import guru.ga.country.model.gql.CountryGqlInput;
 import jakarta.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +38,14 @@ public class DbCountryService implements CountryService {
                 .toList();
     }
 
+    @Override
+    public CountryJson byId(String id) {
+        return countryRepository.findById(UUID.fromString(id))
+                .stream()
+                .map(CountryJson::fromEntity)
+                .findAny().orElseThrow(CountryNotFoundException::new);
+    }
+
     @Transactional
     @Override
     @Nonnull
@@ -51,11 +65,34 @@ public class DbCountryService implements CountryService {
         return CountryJson.fromEntity(updatedEntity);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public CountryJson byId(String id) {
+    @Nonnull
+    public Page<CountryGql> allCountriesGql(Pageable pageable) {
+        return countryRepository.findAll(pageable).
+                map(CountryGql::fromEntity);
+    }
+
+    @Override
+    public CountryGql byIdGql(String id) {
         return countryRepository.findById(UUID.fromString(id))
                 .stream()
-                .map(CountryJson::fromEntity)
+                .map(CountryGql::fromEntity)
                 .findAny().orElseThrow(CountryNotFoundException::new);
+    }
+
+    @Override
+    public CountryGql addCountryGql(CountryGqlInput country) {
+        CountryEntity countryEntity = countryRepository.save(CountryEntity.fromGql(country));
+        return CountryGql.fromEntity(countryEntity);
+    }
+
+    @Override
+    public CountryGql editCountryGql(CountryGqlInput country) {
+        CountryEntity countryEntity = countryRepository.findByCountryName(country.country());
+        countryEntity.setTotalArea(country.totalArea());
+        countryEntity.setCode(country.code());
+        CountryEntity updatedEntity = countryRepository.save(countryEntity);
+        return CountryGql.fromEntity(updatedEntity);
     }
 }
