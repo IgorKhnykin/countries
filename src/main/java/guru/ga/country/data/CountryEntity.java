@@ -1,6 +1,7 @@
 package guru.ga.country.data;
 
 import guru.ga.country.model.CountryJson;
+import guru.ga.country.model.gql.CountryGqlInput;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +36,14 @@ public class CountryEntity implements Serializable {
         ce.setCountryName(countryJson.countryName());
         ce.setCode(countryJson.code());
         ce.setTotalArea(countryJson.totalArea());
+        return ce;
+    }
+
+    public static CountryEntity fromGql(CountryGqlInput countryGqlInput) {
+        CountryEntity ce = new CountryEntity();
+        ce.setCountryName(countryGqlInput.country());
+        ce.setCode(countryGqlInput.code());
+        ce.setTotalArea(countryGqlInput.totalArea());
         return ce;
     }
 
