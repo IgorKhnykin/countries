@@ -1,6 +1,5 @@
 package guru.ga.country.controller.graphqls;
 
-import guru.ga.country.model.CountryJson;
 import guru.ga.country.model.gql.CountryGql;
 import guru.ga.country.model.gql.CountryGqlInput;
 import guru.ga.country.service.CountryService;

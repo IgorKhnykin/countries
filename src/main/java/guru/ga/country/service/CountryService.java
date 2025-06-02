@@ -3,7 +3,6 @@ package guru.ga.country.service;
 import guru.ga.country.model.CountryJson;
 import guru.ga.country.model.gql.CountryGql;
 import guru.ga.country.model.gql.CountryGqlInput;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
